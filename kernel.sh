@@ -33,7 +33,7 @@ export LOGFILE=log-$BUILDDATE-$BUILDTIME.txt
 git pull
 
 # Clang and GCC
-export CC="$(command -v ccache) /home/anirudhgupta109/clang/clang-r349610/bin/clang"
+export CC="$(command -v ccache) /home/anirudhgupta109/clang/clang-r353983/bin/clang"
 export KBUILD_COMPILER_STRING="$(${CC} --version | head -n 1 | perl -pe 's/\(http.*?\)//gs' | sed -e 's/  */ /g')"
 export CROSS_COMPILE=/home/anirudhgupta109/gcc/bin/aarch64-linux-android-
 export CLANG_TRIPLE=aarch64-linux-gnu-
@@ -66,3 +66,4 @@ cd $OUTPUT
 git push
 cd $SAUCE
 telegram-send --config $ROL --file out/include/generated/compile.h
+sudo shutdown
