@@ -40,15 +40,15 @@ export LOGFILE=log-$BUILDDATE-$BUILDTIME.txt
 git pull
 
 # installclean
-sudo make clean
-sudo make mrproper
-sudo make $DEFCONFG
-sudo rm -rf $OUTPUT/linux-*.deb
+make clean
+make mrproper
+make $DEFCONFG
+rm -rf $OUTPUT/linux-*.deb
 
 # Build
 export DATE_START=$(date +"%s")
 if [[ $SERVER == $TRUE ]]; then
-    sudo make CC="ccache gcc" HOSTCC='ccache gcc' ARCH=x86 SUBARCH=x86_64 -j$(nproc --all) deb-pkg
+    make CC="ccache gcc" HOSTCC='ccache gcc' ARCH=x86 SUBARCH=x86_64 -j$(nproc --all) bindeb-pkg
     cd $OUTPUT
     zip $NAME -r linux*.deb -x *dbg*
     while [[ ! "$DLURL" =~ "https://drive.google.com" ]]; do
@@ -66,7 +66,7 @@ if [[ $SERVER == $TRUE ]]; then
     cd $SAUCE
     sudo shutdown 10
 else
-    sudo make CC="ccache gcc" HOSTCC='ccache gcc' ARCH=x86 SUBARCH=x86_64 -j$(nproc --all)
+    make CC="ccache gcc" HOSTCC='ccache gcc' ARCH=x86 SUBARCH=x86_64 -j$(nproc --all)
     sudo make modules_install -j$(nproc --all)
     sudo make install -j$(nproc --all)
     sudo update-initramfs -c -k "$VER.$PATCHLVL.$SUBVER$LOCALVER"
