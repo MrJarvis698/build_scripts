@@ -62,7 +62,7 @@ if [[ $SERVER == $TRUE ]]; then
         DLURL=$(cat /tmp/gdrive-info-$BUILDDATE-$BUILDTIME | grep 'DownloadUrl' | awk '{ print $2 }')
     done
     echo -e "Linux Kernel! \nKernel details: <code>$NAME</code>\nFile ID: <code>$FILEID</code>\nSize: <code>$SIZE</code>MB\nmd5sum: <code>$MD5SUM</code>\nDownload link: $DLURL" | telegram-send --config $ROL --format html --stdin
-    mv $NAME.zip $ARCHIVES
+    mv $NAME $ARCHIVES
     cd $SAUCE
     sudo shutdown 10
 else
