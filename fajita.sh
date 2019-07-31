@@ -11,9 +11,9 @@ export AOSIP=~/build_scripts/aosip.conf
 #export GDRIVE=/usr/bin/gdrive
 
 # Build related
-export TARGET=aosip_enchilada-userdebug
+export TARGET=aosip_fajita-userdebug
 export AOSIPVER=9.0
-export DEVICENAME=enchilada
+export DEVICENAME=fajita
 export MAKETARGET=kronic
 
 # Go to source directory
@@ -72,13 +72,13 @@ while [[ ! "$DLURL" =~ "https://drive.google.com" ]]; do
     SIZE=$(cat /tmp/gdrive-info-$BUILDDATE-$BUILDTIME | grep 'Size' | awk '{ print $2 }')
     DLURL=$(cat /tmp/gdrive-info-$BUILDDATE-$BUILDTIME | grep 'DownloadUrl' | awk '{ print $2 }')
 done
-#rsync -e ssh ~/ROMs/$ROMZ.zip anirudhgupta109@frs.sourceforge.net:/home/frs/project/agbuilds/Enchilada/AOSiP
-echo "{ \"response\": [ { \"datetime\": $(grep ro\.build\.date\.utc $OUT/system/build.prop | cut -d= -f2), \"filename\": \"$(basename $(ls $STO/$ROMZ.zip))\", \"id\": \"$((sha256sum $STO/$ROMZ.zip) | cut -d ' ' -f1)\", \"romtype\": \"$AOSIP_BUILDTYPE\", \"size\": $(stat -c%s $STO/$ROMZ.zip), \"url\": \"https://sourceforge.net/projects/agbuilds/files/Enchilada/AOSiP/$(basename $(ls $STO/$ROMZ.zip))/download\", \"version\": \"9.0\"  }]}" > sysserv.json
+#rsync -e ssh ~/ROMs/$ROMZ.zip anirudhgupta109@frs.sourceforge.net:/home/frs/project/agbuilds/Fajita/AOSiP
+echo "{ \"response\": [ { \"datetime\": $(grep ro\.build\.date\.utc $OUT/system/build.prop | cut -d= -f2), \"filename\": \"$(basename $(ls $STO/$ROMZ.zip))\", \"id\": \"$((sha256sum $STO/$ROMZ.zip) | cut -d ' ' -f1)\", \"romtype\": \"$AOSIP_BUILDTYPE\", \"size\": $(stat -c%s $STO/$ROMZ.zip), \"url\": \"https://sourceforge.net/projects/agbuilds/files/Fajita/AOSiP/$(basename $(ls $STO/$ROMZ.zip))/download\", \"version\": \"9.0\"  }]}" > sysserv.json
 jq . sysserv.json
 echo -e "「Build completed! 」\nPackage name: <code>$NAME</code>\nFile ID: <code>$FILEID</code>\nSize: <code>$SIZE</code>MB\nmd5sum: <code>$MD5SUM</code>\nDownload link: $DLURL" | telegram-send --config $ROL --format html --stdin
 echo -e "「Build completed! 」\nPackage name: <code>$NAME</code>\nFile ID: <code>$FILEID</code>\nSize: <code>$SIZE</code>MB\nmd5sum: <code>$MD5SUM</code>\nDownload link: $DLURL" | telegram-send --config $AOSIP --format html --stdin
 telegram-send --config $ROL --file sysserv.json
 telegram-send --config $ROL --file $LOGFILE --timeout 40.0
 telegram-send --config $ROL --format html "Shutting down server"
-telegram-send --config $ROL "@ohayoubaka @MrWilsonxD @anirudhgupta109"
-#sudo shutdown
+telegram-send --config $AOSIP "@nezorflame @ironhydee test pls"
+sudo shutdown

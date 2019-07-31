@@ -2,6 +2,7 @@
 
 # Telegram
 export ROL=~/build_scripts/onememe.conf
+export IK=~/build_scripts/illusion.conf
 
 # Build related
 export DEVICENAME=enchilada
@@ -19,10 +20,13 @@ export BUILDTIME=$(date +%H%M)
 
 # Tell everyone we are going to start building
 cd $SAUCE
+
+# Naming stuffs
 export SUBVER=$(grep "SUBLEVEL =" < Makefile | awk '{print $3}')
+export COMMIT=$(git rev-parse --short=8 HEAD)
 
 # Name of zip
-export ZIP=IllusionKernel-$SUBVER-$BUILDDATE-$BUILDTIME
+export ZIP=IllusionKernel-$SUBVER-$COMMIT-$BUILDDATE-$BUILDTIME
 
 # Log
 rm -rf log*.txt
@@ -32,13 +36,11 @@ export LOGFILE=log-$BUILDDATE-$BUILDTIME.txt
 # Bring up-to-date with sauce
 git pull
 
-# Clang and GCC
-export CC="$(command -v ccache) /home/anirudhgupta109/clang/clang-r353983/bin/clang"
-export KBUILD_COMPILER_STRING="$(${CC} --version | head -n 1 | perl -pe 's/\(http.*?\)//gs' | sed -e 's/  */ /g')"
-export CROSS_COMPILE=/home/anirudhgupta109/gcc/bin/aarch64-linux-android-
-export CLANG_TRIPLE=aarch64-linux-gnu-
-export ARCH=arm64
-export SUBARCH=arm64
+# Clang and GCC paths
+export CLANG="/home/anirudhgupta109/clang/clang-r353983e/bin/clang"
+export GCC="/home/anirudhgupta109/gcc/bin/aarch64-linux-android-"
+# Trim clang compiler string
+export KBUILD_COMPILER_STRING="$(${CLANG} --version | head -n 1 | perl -pe 's/\(http.*?\)//gs' | sed -e 's/  */ /g')"
 
 # installclean
 #telegram-send --config $ROL --format html "Building Clean af"
@@ -46,10 +48,10 @@ rm -rf out/arch/arm64/boot/Image.gz-dtb
 #rm -rf out/
 
 # Activate venv
-source ~/tmp/venv/bin/activate
+#source ~/tmp/venv/bin/activate
 
 # Build
-make O=out $DEFCONFG && time make -j$(nproc --all) O=out | tee $LOGFILE
+make O=out ARCH=arm64 $DEFCONFG && time make -j$(nproc --all) O=out ARCH=arm64 CC="$(command -v ccache) $CLANG" CLANG_TRIPLE=aarch64-linux-gnu- CROSS_COMPILE=$GCC | tee $LOGFILE
 EXITCODE=$?
 if [ $EXITCODE -ne 0 ]; then telegram-send --config $ROL --format html "Build failed! Check log file <code>$LOGFILE</code>"; telegram-send --config $ROL --file $LOGFILE; exit 1; fi
 
@@ -61,9 +63,10 @@ zip $ZIP -r *
 
 # Starting upload!
 telegram-send --config $ROL --file $ZIP.zip --timeout 480.0
+#telegram-send --config $IK --file $ZIP.zip --timeout 480.0
 mv $ZIP.zip $OUTPUT/$ZIP.zip
 cd $OUTPUT
 git push
 cd $SAUCE
 telegram-send --config $ROL --file out/include/generated/compile.h
-sudo shutdown
+#sudo shutdown
